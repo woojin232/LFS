@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="boardDao">
+
+<sql id="boardColumns">
+	  id
+	, title
+	, content
+	, writer
+	, read_cnt
+	, insert_time
+	, update_time
+</sql>
+
+<insert id="insertBoard" parameterType="BoardDTO">
+	insert into TB_BOARD (
+		<include refid="boardColumns" />
+	) values (
+		  TB_BOARD_SEQ.NEXTVAL
+		, #{title}
+		, #{content}
+		, #{writer}
+		, 0
+		, sysdate
+		, null
+	)
+</insert>
+
+
+<!-- 게시글 목록 조회 -->
+	<select id="selectTest" parameterType="boardVo" >
+	
+			<![CDATA[
+			SELECT * 
+			FROM tbl_board
+		]]>
+		<!--제목 검색어 -->
+    	<if test='keyword != null and keyword != ""'>
+    		    
+        	<![CDATA[where REPLACE(title,' ','') LIKE CONCAT('%', REPLACE(#{keyword},' ',''), '%')]]>
+        </if>
+<!-- 		페이징을 위한 sql -->
+		<![CDATA[
+			ORDER BY bno DESC
+			LIMIT #{recordCountPerPage} OFFSET #{firstIndex}
+		]]>  
+	</select>
+</mapper>
